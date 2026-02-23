@@ -1,0 +1,5 @@
+python-telegram-bot
+requests
+chromadb
+sentence-transformers
+python-dotenv

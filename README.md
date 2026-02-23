@@ -25,11 +25,12 @@ Mensagem do usuário
 
 ```
 .
-├── bot.py        # Bot do Telegram e handlers de mensagem
-├── memory.py     # Módulo de memória vetorial (ChromaDB + sentence-transformers)
-├── .env          # Chaves de API (não versionado)
+├── bot.py            # Bot do Telegram e handlers de mensagem
+├── memory.py         # Módulo de memória vetorial (ChromaDB + sentence-transformers)
+├── requirements.txt  # Dependências do projeto
+├── .env              # Chaves de API (não versionado)
 ├── .gitignore
-└── chroma_db/    # Banco de vetores persistente (não versionado)
+└── chroma_db/        # Banco de vetores persistente (não versionado)
 ```
 
 ## Requisitos
@@ -51,7 +52,7 @@ cd bot_mentor
 2. Instale as dependências:
 
 ```bash
-pip install python-telegram-bot requests chromadb sentence-transformers python-dotenv
+pip install -r requirements.txt
 ```
 
 3. Crie um arquivo `.env` na raiz do projeto:

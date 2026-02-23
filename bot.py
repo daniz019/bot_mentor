@@ -3,7 +3,6 @@ import requests
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
-import memory
 
 load_dotenv()
 
@@ -26,13 +25,7 @@ Se o usuário pedir pra você mudar alguma coisa no jeito que conversa, ajuste i
 """
 
 
-def ask_ai(user_id: int, user_message: str) -> str:
-    memories = memory.search(user_id, user_message)
-    memory_block = (
-        "\n\n[Memórias relevantes do usuário]\n" + "\n---\n".join(memories)
-        if memories else ""
-    )
-
+def ask_ai(user_message: str) -> str:
     response = requests.post(
         url="https://openrouter.ai/api/v1/chat/completions",
         headers={
@@ -42,16 +35,12 @@ def ask_ai(user_id: int, user_message: str) -> str:
         json={
             "model": MODEL,
             "messages": [
-                {"role": "system", "content": SYSTEM_PROMPT + memory_block},
+                {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_message},
             ],
         },
     )
-    reply = response.json()["choices"][0]["message"]["content"]
-
-    memory.add(user_id, f"Usuário: {user_message}\nAssistente: {reply}")
-
-    return reply
+    return response.json()["choices"][0]["message"]["content"]
 
 
 def transcribe_audio(file_bytes: bytes) -> str:
@@ -69,7 +58,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    reply = ask_ai(update.effective_user.id, update.message.text)
+    reply = ask_ai(update.message.text)
     await update.message.reply_text(reply)
 
 
@@ -77,7 +66,7 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     voice = await update.message.voice.get_file()
     file_bytes = await voice.download_as_bytearray()
     text = transcribe_audio(bytes(file_bytes))
-    reply = ask_ai(update.effective_user.id, text)
+    reply = ask_ai(text)
     await update.message.reply_text(reply)
 
 

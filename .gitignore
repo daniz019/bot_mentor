@@ -1,0 +1,9 @@
+# Segredos
+.env
+
+# Banco de vetores
+chroma_db/
+
+# Python
+__pycache__/
+*.pyc
